@@ -1,12 +1,29 @@
-function Student(firstName,lastName,age,score){
-    this.firstName=firstName;
-    this.lastName= lastName;
-    this.age=age;
-    this.score=score
-    this.getFullName = function(){
-        return this.firstName+" "+this.lastName
+let promise = new Promise(function(resolve,reject){
+    let a = Math.floor(Math.random()*51);
+    console.log(a);
+    if(a%2==0){
+        resolve(a);
+    }else{
+        reject(a);
     }
-}
-let student1 = new Student("nguyen","Tung",18,8.0);
-let student2 = new Student("nguyen","Toan",19,8.5);
-let student3 = new Student("nguyen","Tien",20,9.0);
+})
+promise.then(
+    function(data){
+        console.log("thanh cong "+data);
+        return data*2;
+    }
+).then(
+    function(data){
+        console.log("thanh cong 2 "+data);
+        return data*2;
+    }
+).then(
+    function(data){
+        console.log("thanh cong 3 "+data);
+    }
+)
+.catch(
+    function(error){
+        console.log("that bai "+error);
+    }
+)
