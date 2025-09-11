@@ -1,29 +1,20 @@
-let promise = new Promise(function(resolve,reject){
-    let a = Math.floor(Math.random()*51);
-    console.log(a);
-    if(a%2==0){
-        resolve(a);
-    }else{
-        reject(a);
-    }
-})
-promise.then(
+fetch('http://localhost:3000/posts').then(
     function(data){
-        console.log("thanh cong "+data);
-        return data*2;
+        return data.json()
     }
 ).then(
-    function(data){
-        console.log("thanh cong 2 "+data);
-        return data*2;
-    }
-).then(
-    function(data){
-        console.log("thanh cong 3 "+data);
+    function(posts){
+        for (const post of posts) {
+            let body = document.getElementById("body");
+            body.innerHTML+=convertDataToHTML(post);
+        }
     }
 )
-.catch(
-    function(error){
-        console.log("that bai "+error);
-    }
-)
+function convertDataToHTML(post){
+    let result = "<tr>";
+    result +=  "<td>"+post.id+"</td>";
+    result +=  "<td>"+post.title+"</td>";
+    result +=  "<td>"+post.views+"</td>";
+    result += "</tr>";
+    return result;
+}
