@@ -1,23 +1,44 @@
-let http = require('http');
-let fs = require('fs');
+const express = require('express')
+const app = express()
+const port = 3000
 
-const server = http.createServer((req, res) => {
-    if(req.url.includes('home')){
-        let data = fs.readFileSync("./home.html");
-        console.log(data);
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(data);
-    }else{
-        let data = fs.readFileSync("./home.html");
-        console.log(data);
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(data);
+let posts = [
+    {
+      id: "1",
+      title: "a title",
+      views: 100
+    },
+    {
+      id: "2",
+      title: "another title",
+      views: 200
     }
-});
+  ]
 
-// starts a simple http server locally on port 3000
-server.listen(3000, '127.0.0.1', () => {
-  console.log('Listening on 127.0.0.1:3000');
-});
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+app.get('/posts', (req, res) => {
+    res.send(posts)
+})
+app.get('/posts/:id', (req, res) => {
+    let id = req.params.id;
+    let post = posts.filter(
+        p=>p.id==id
+    )
+    if(post.length>0){
+        res.send(post[0]);
+    }else{
+        res.status(404).send({
+            success:false,
+            data:{
+                message: "id not found"
+            }
+        });
+    }
+})
 
-// run with `node server.mjs`
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
