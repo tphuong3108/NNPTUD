@@ -1,33 +1,16 @@
 const express = require('express')
 const app = express()
 const port = 3000
+let fs = require('fs')
 
-let posts = [
-    {
-      id: "1",
-      title: "a title",
-      views: 100
-    },
-    {
-      id: "2",
-      title: "another title",
-      views: 200
-    },{
-        id: "3",
-        title: "a title 3",
-        views: 300
-      },
-      {
-        id: "4",
-        title: "another title 4",
-        views: 100
-      }
-  ]
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 app.get('/posts', (req, res) => {
+    let posts = fs.readFileSync('./db.json');
+    posts = JSON.parse(posts).posts;
+    
     let queries = req.query;
     let views = queries.views;
     let views_lte = queries.views_lte;
