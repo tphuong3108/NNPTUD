@@ -5,11 +5,11 @@ let productModel = require('../schemas/product')
 
 
 /* GET users listing. */
-router.get('/', async function(req, res, next) {
-  let products = await productModel.find({})
+router.get('/', async function(req, res) {
+  let products = await productModel.find({ isDelete: false });
   res.send({
     success: true,
-    data:products
+    data: products
   });
 });
 router.get('/:id', async function(req, res, next) {
@@ -73,6 +73,25 @@ router.put('/:id', async function(req,res,next){
   //   success: true,
   //   data:item
   // })  
+  // DELETE product -> set isDelete = true
+router.delete('/:id', async function(req, res) {
+  try {
+    let deletedItem = await productModel.findByIdAndUpdate(
+      req.params.id,
+      { isDelete: true },
+      { new: true }
+    );
+    res.send({
+      success: true,
+      data: deletedItem
+    });
+  } catch (error) {
+    res.status(404).send({
+      success: false,
+      error: error.message
+    });
+  }
+});
 })
 
 module.exports = router;
