@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Ảnh</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 24px;
+    }
+    h2 {
+      color: #1a73e8;
+      margin-bottom: 20px;
+    }
+    input[type="file"] {
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #1668c1;
+    }
+    .preview img {
+      width: 100px;
+      height: 100px;
+      border-radius: 6px;
+      margin-right: 8px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+    }
+    hr {
+      margin: 30px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Upload Avatar</h2>
+    <p>Chức năng này yêu cầu đăng nhập (cần token hợp lệ).</p>
+
+    <label>Chọn ảnh avatar:</label>
+    <input type="file" id="avatarInput" accept="image/*">
+    <button onclick="uploadAvatar()">Tải lên Avatar</button>
+
+    <div id="avatarPreview" class="preview"></div>
+
+    <hr>
+
+    <h2>Upload Nhiều Ảnh</h2>
+    <label>Chọn nhiều ảnh:</label>
+    <input type="file" id="multiInput" multiple accept="image/*">
+    <button onclick="uploadMulti()">Tải lên</button>
+
+    <div id="multiPreview" class="preview"></div>
+  </div>
+
+  <script>
+    const token = "PASTE_YOUR_JWT_TOKEN_HERE";
+
+    async function uploadAvatar() {
+      const file = document.getElementById("avatarInput").files[0];
+      if (!file) return alert("Vui lòng chọn ảnh trước!");
+
+      const formData = new FormData();
+      formData.append("avatar", file);
+
+      try {
+        const res = await fetch("/users/upload-avatar", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById("avatarPreview").innerHTML =
+            `<img src="${data.imageUrl}" alt="avatar"/>`;
+          alert("Upload avatar thành công!");
+        } else {
+          alert(data.message || "Lỗi upload!");
+        }
+      } catch (err) {
+        alert("Lỗi kết nối đến server!");
+      }
+    }
+
+    async function uploadMulti() {
+      const files = document.getElementById("multiInput").files;
+      if (files.length === 0) return alert("Vui lòng chọn ít nhất 1 ảnh!");
+
+      const formData = new FormData();
+      for (let f of files) formData.append("image", f);
+
+      try {
+        const res = await fetch("/files/uploadMulti", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById("multiPreview").innerHTML = data.data
+            .map((url) => `<img src="${url}" alt="uploaded"/>`)
+            .join("");
+          alert("Upload nhiều ảnh thành công!");
+        } else {
+          alert(data.message || " Lỗi upload!");
+        }
+      } catch (err) {
+        alert(" Lỗi kết nối đến server!");
+      }
+    }
+  </script>
+</body>
+</html>

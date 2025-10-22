@@ -8,7 +8,7 @@ let {Response} = require('./utils/responseHandler')
 
 
 // Database connection
-mongoose.connect('mongodb://localhost:27017/NNPTUD-S5')
+mongoose.connect('mongodb+srv://phuongbeo3108203_db_user:4L3PUu3EbTCFzsQ0@cluster0.idjil18.mongodb.net/')
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
 
@@ -26,6 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
